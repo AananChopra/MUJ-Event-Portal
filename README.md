@@ -1,6 +1,6 @@
 # MUJ Events
 
-Event registration system for MUJ. Built with Node.js, Express, Firebase (Firestore), and Bootstrap 5. Has dark mode, looks pretty clean, and works well.
+Event registration system for MUJ. Built with Node.js, Express, Firebase (Firestore).
 
 ## What it does
 
