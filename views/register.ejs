@@ -1,0 +1,109 @@
+<%- include('partials/header') %>
+
+    <!-- Page Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <a href="/" class="text-decoration-none text-muted mb-2 d-inline-block">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left me-1" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"/>
+                </svg>
+                Back to Events
+            </a>
+            <h1 class="display-5 text-primary">Event Registration</h1>
+        </div>
+    </div>
+
+    <!-- Alert Messages -->
+    <% if (typeof message !== 'undefined' && message) { %>
+        <div class="alert alert-<%= messageType || 'info' %> alert-dismissible fade show" role="alert">
+            <%= message %>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    <% } %>
+
+    <!-- Event Details Card -->
+    <% if (typeof event !== 'undefined') { %>
+        <div class="card mb-4 shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Event Details</h5>
+            </div>
+            <div class="card-body">
+                <h4 class="card-title text-primary"><%= event.title %></h4>
+                <p class="card-text mb-2">
+                    <strong>Date:</strong> <%= new Date(event.date).toLocaleDateString('en-US', { 
+                        year: 'numeric', 
+                        month: 'long', 
+                        day: 'numeric' 
+                    }) %>
+                </p>
+                <p class="card-text mb-0">
+                    <strong>Venue:</strong> <%= event.venue %>
+                </p>
+            </div>
+        </div>
+    <% } %>
+
+    <!-- Registration Form -->
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">Registration Form</h5>
+                </div>
+                <div class="card-body">
+                    <form id="registrationForm" action="/register" method="POST" novalidate>
+                        <!-- Hidden field to store event ID -->
+                        <input type="hidden" name="event_id" value="<%= typeof event !== 'undefined' ? event.id : '' %>">
+                        
+                        <!-- Name Field -->
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Full Name <span class="text-danger">*</span></label>
+                            <input 
+                                type="text" 
+                                class="form-control" 
+                                id="name" 
+                                name="name" 
+                                placeholder="Enter your full name"
+                                value="<%= typeof user !== 'undefined' && user ? (user.name || '') : '' %>"
+                                required
+                            >
+                            <div class="invalid-feedback">
+                                Please provide your full name.
+                            </div>
+                        </div>
+
+                        <!-- Email Field -->
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email Address <span class="text-danger">*</span></label>
+                            <input 
+                                type="email" 
+                                class="form-control" 
+                                id="email" 
+                                name="email" 
+                                placeholder="Enter your email address"
+                                value="<%= typeof user !== 'undefined' && user ? (user.email || '') : '' %>"
+                                required
+                            >
+                            <div class="invalid-feedback">
+                                Please provide a valid email address.
+                            </div>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-check-circle me-2" viewBox="0 0 16 16">
+                                    <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                                    <path d="M10.97 4.97a.235.235 0 0 0-.02.022L7.477 9.417 2.604 6.303a.75.75 0 0 0-1.208.79l4.812 4.812a.75.75 0 0 0 1.218-.248l3.5-5.25a.75.75 0 0 0-.135-1.015z"/>
+                                </svg>
+                                Submit Registration
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<%- include('partials/footer') %>
+

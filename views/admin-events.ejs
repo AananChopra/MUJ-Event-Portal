@@ -1,0 +1,106 @@
+<%- include('partials/header') %>
+
+    <!-- Page Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="display-5 mb-3" style="color: var(--accent-color);">Admin Dashboard</h1>
+            <p class="lead text-muted">Manage events and registrations</p>
+        </div>
+    </div>
+
+    <!-- Alert Messages -->
+    <% if (typeof message !== 'undefined' && message) { %>
+        <div class="alert alert-<%= messageType || 'info' %> alert-dismissible fade show" role="alert">
+            <%= message %>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    <% } %>
+
+    <!-- Tabs -->
+    <ul class="nav nav-tabs mb-4" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="events-tab" data-bs-toggle="tab" data-bs-target="#events" type="button" role="tab">
+                Manage Events
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <a class="nav-link" href="/admin">View Registrations</a>
+        </li>
+    </ul>
+
+    <div class="tab-content">
+        <div class="tab-pane fade show active" id="events" role="tabpanel">
+            <!-- Add Event Form -->
+            <div class="card mb-4 shadow-sm">
+                <div class="card-header" style="background: linear-gradient(135deg, var(--accent-color) 0%, var(--accent-hover) 100%); color: white;">
+                    <h5 class="mb-0">Add New Event</h5>
+                </div>
+                <div class="card-body">
+                    <form action="/admin/events" method="POST">
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label for="title" class="form-label">Event Title</label>
+                                <input type="text" class="form-control" id="title" name="title" required>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="date" class="form-label">Event Date</label>
+                                <input type="date" class="form-control" id="date" name="date" required>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="venue" class="form-label">Venue</label>
+                                <input type="text" class="form-control" id="venue" name="venue" required>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            Add Event
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Events List -->
+            <div class="card shadow">
+                <div class="card-header" style="background: linear-gradient(135deg, var(--accent-color) 0%, var(--accent-hover) 100%); color: white;">
+                    <h5 class="mb-0">All Events</h5>
+                </div>
+                <div class="card-body">
+                    <% if (typeof events !== 'undefined' && events.length > 0) { %>
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Title</th>
+                                        <th>Date</th>
+                                        <th>Venue</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% events.forEach(event => { %>
+                                        <tr>
+                                            <td><%= event.id %></td>
+                                            <td><strong><%= event.title %></strong></td>
+                                            <td><%= new Date(event.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) %></td>
+                                            <td><%= event.venue %></td>
+                                            <td>
+                                                <form action="/admin/events/<%= event.id %>/delete" method="POST" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this event?');">
+                                                    <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    <% }); %>
+                                </tbody>
+                            </table>
+                        </div>
+                    <% } else { %>
+                        <p class="text-muted">No events found. Add your first event above.</p>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<%- include('partials/footer') %>
+
+

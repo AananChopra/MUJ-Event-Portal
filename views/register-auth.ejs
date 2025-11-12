@@ -1,0 +1,267 @@
+<%- include('partials/header') %>
+
+    <div class="row justify-content-center">
+        <div class="col-md-5 col-lg-4">
+            <div class="card shadow">
+                <div class="card-body p-5">
+                    <div class="text-center mb-4">
+                        <img src="/logo.png" alt="Logo" height="60" class="mb-3">
+                        <h2 class="card-title mb-2">Create Account</h2>
+                        <p class="text-muted">Register for a new account</p>
+                    </div>
+
+                    <!-- Alert Messages -->
+                    <% if (typeof message !== 'undefined' && message) { %>
+                        <div class="alert alert-<%= messageType || 'info' %> alert-dismissible fade show" role="alert">
+                            <%= message %>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    <% } %>
+
+                    <!-- Role Tabs -->
+                    <ul class="nav nav-tabs mb-4" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="student-reg-tab" data-bs-toggle="tab" data-bs-target="#student-reg" type="button" role="tab">
+                                Student
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="admin-reg-tab" data-bs-toggle="tab" data-bs-target="#admin-reg" type="button" role="tab">
+                                Admin
+                            </button>
+                        </li>
+                    </ul>
+
+                    <div class="tab-content">
+                        <!-- Student Registration -->
+                        <div class="tab-pane fade show active" id="student-reg" role="tabpanel">
+                            <form id="registerForm">
+                                <input type="hidden" id="userRole" name="role" value="student">
+                                <div class="mb-3">
+                                    <label for="name" class="form-label">Full Name</label>
+                                    <input 
+                                        type="text" 
+                                        class="form-control" 
+                                        id="name" 
+                                        name="name" 
+                                        placeholder="Enter your full name"
+                                        required
+                                        autocomplete="name"
+                                    >
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="email" class="form-label">Email Address</label>
+                                    <input 
+                                        type="email" 
+                                        class="form-control" 
+                                        id="email" 
+                                        name="email" 
+                                        placeholder="Enter your email"
+                                        required
+                                        autocomplete="email"
+                                    >
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="password" class="form-label">Password</label>
+                                    <input 
+                                        type="password" 
+                                        class="form-control" 
+                                        id="password" 
+                                        name="password" 
+                                        placeholder="Enter your password (min 6 characters)"
+                                        required
+                                        autocomplete="new-password"
+                                        minlength="6"
+                                    >
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="confirmPassword" class="form-label">Confirm Password</label>
+                                    <input 
+                                        type="password" 
+                                        class="form-control" 
+                                        id="confirmPassword" 
+                                        name="confirmPassword" 
+                                        placeholder="Confirm your password"
+                                        required
+                                        autocomplete="new-password"
+                                    >
+                                </div>
+
+                                <div class="d-grid gap-2 mb-3">
+                                    <button type="submit" class="btn btn-primary" id="registerBtn">
+                                        Register as Student
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+
+                        <!-- Admin Registration -->
+                        <div class="tab-pane fade" id="admin-reg" role="tabpanel">
+                            <form id="adminRegisterForm">
+                                <input type="hidden" id="adminUserRole" name="role" value="admin">
+                                <div class="mb-3">
+                                    <label for="adminName" class="form-label">Full Name</label>
+                                    <input 
+                                        type="text" 
+                                        class="form-control" 
+                                        id="adminName" 
+                                        name="name" 
+                                        placeholder="Enter your full name"
+                                        required
+                                        autocomplete="name"
+                                    >
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="adminEmail" class="form-label">Email Address</label>
+                                    <input 
+                                        type="email" 
+                                        class="form-control" 
+                                        id="adminEmail" 
+                                        name="email" 
+                                        placeholder="Enter your email"
+                                        required
+                                        autocomplete="email"
+                                    >
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="adminPassword" class="form-label">Password</label>
+                                    <input 
+                                        type="password" 
+                                        class="form-control" 
+                                        id="adminPassword" 
+                                        name="password" 
+                                        placeholder="Enter your password (min 6 characters)"
+                                        required
+                                        autocomplete="new-password"
+                                        minlength="6"
+                                    >
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="adminConfirmPassword" class="form-label">Confirm Password</label>
+                                    <input 
+                                        type="password" 
+                                        class="form-control" 
+                                        id="adminConfirmPassword" 
+                                        name="confirmPassword" 
+                                        placeholder="Confirm your password"
+                                        required
+                                        autocomplete="new-password"
+                                    >
+                                </div>
+
+                                <div class="d-grid gap-2 mb-3">
+                                    <button type="submit" class="btn btn-primary" id="adminRegisterBtn">
+                                        Register as Admin
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="text-center">
+                        <p class="mb-0">Already have an account? <a href="/login">Login here</a></p>
+                    </div>
+
+                    <div id="registerError" class="alert alert-danger d-none mt-3" role="alert"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<%- include('partials/footer') %>
+
+<script type="module">
+    import { createUserWithEmailAndPassword, updateProfile } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    
+    const registerForm = document.getElementById('registerForm');
+    const adminRegisterForm = document.getElementById('adminRegisterForm');
+    const registerBtn = document.getElementById('registerBtn');
+    const adminRegisterBtn = document.getElementById('adminRegisterBtn');
+    const registerError = document.getElementById('registerError');
+    
+    function handleRegister(name, email, password, confirmPassword, role) {
+        return async function(e) {
+            e.preventDefault();
+            
+            // Validate passwords match
+            if (password !== confirmPassword) {
+                registerError.textContent = 'Passwords do not match';
+                registerError.classList.remove('d-none');
+                return;
+            }
+            
+            const btn = role === 'admin' ? adminRegisterBtn : registerBtn;
+            btn.disabled = true;
+            btn.textContent = 'Registering...';
+            registerError.classList.add('d-none');
+            
+            try {
+                const auth = window.firebaseAuth;
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+                
+                // Update profile with name
+                await updateProfile(user, { displayName: name });
+                
+                // Get ID token
+                const idToken = await user.getIdToken();
+                
+                // Send token to server
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        idToken: idToken,
+                        userData: {
+                            email: user.email,
+                            name: name,
+                            role: role
+                        }
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    window.location.href = '/';
+                } else {
+                    throw new Error(data.error || 'Registration failed');
+                }
+            } catch (error) {
+                console.error('Registration error:', error);
+                registerError.textContent = error.message || 'Registration failed. Please try again.';
+                registerError.classList.remove('d-none');
+                btn.disabled = false;
+                btn.textContent = role === 'admin' ? 'Register as Admin' : 'Register as Student';
+            }
+        };
+    }
+    
+    if (registerForm) {
+        registerForm.addEventListener('submit', function(e) {
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            handleRegister(name, email, password, confirmPassword, 'student')(e);
+        });
+    }
+    
+    if (adminRegisterForm) {
+        adminRegisterForm.addEventListener('submit', function(e) {
+            const name = document.getElementById('adminName').value;
+            const email = document.getElementById('adminEmail').value;
+            const password = document.getElementById('adminPassword').value;
+            const confirmPassword = document.getElementById('adminConfirmPassword').value;
+            handleRegister(name, email, password, confirmPassword, 'admin')(e);
+        });
+    }
+</script>

@@ -1,0 +1,199 @@
+<%- include('partials/header') %>
+
+    <div class="row justify-content-center">
+        <div class="col-md-5 col-lg-4">
+            <div class="card shadow">
+                <div class="card-body p-5">
+                    <div class="text-center mb-4">
+                        <img src="/logo.png" alt="Logo" height="60" class="mb-3">
+                        <h2 class="card-title mb-2">Welcome Back</h2>
+                        <p class="text-muted">Login to your account</p>
+                    </div>
+
+                    <!-- Alert Messages -->
+                    <% if (typeof message !== 'undefined' && message) { %>
+                        <div class="alert alert-<%= messageType || 'info' %> alert-dismissible fade show" role="alert">
+                            <%= message %>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    <% } %>
+
+                    <!-- Role Tabs -->
+                    <ul class="nav nav-tabs mb-4" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="student-tab" data-bs-toggle="tab" data-bs-target="#student" type="button" role="tab">
+                                Student
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="admin-tab" data-bs-toggle="tab" data-bs-target="#admin" type="button" role="tab">
+                                Admin
+                            </button>
+                        </li>
+                    </ul>
+
+                    <div class="tab-content">
+                        <!-- Student Login -->
+                        <div class="tab-pane fade show active" id="student" role="tabpanel">
+                            <form id="loginForm">
+                                <input type="hidden" id="userRole" name="role" value="student">
+                                <div class="mb-3">
+                                    <label for="email" class="form-label">Email Address</label>
+                                    <input 
+                                        type="email" 
+                                        class="form-control" 
+                                        id="email" 
+                                        name="email" 
+                                        placeholder="Enter your email"
+                                        required
+                                        autocomplete="email"
+                                    >
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="password" class="form-label">Password</label>
+                                    <input 
+                                        type="password" 
+                                        class="form-control" 
+                                        id="password" 
+                                        name="password" 
+                                        placeholder="Enter your password"
+                                        required
+                                        autocomplete="current-password"
+                                    >
+                                </div>
+
+                                <div class="d-grid gap-2 mb-3">
+                                    <button type="submit" class="btn btn-primary" id="loginBtn">
+                                        Login as Student
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+
+                        <!-- Admin Login -->
+                        <div class="tab-pane fade" id="admin" role="tabpanel">
+                            <form id="adminLoginForm">
+                                <input type="hidden" id="adminUserRole" name="role" value="admin">
+                                <div class="mb-3">
+                                    <label for="adminEmail" class="form-label">Email Address</label>
+                                    <input 
+                                        type="email" 
+                                        class="form-control" 
+                                        id="adminEmail" 
+                                        name="email" 
+                                        placeholder="Enter your email"
+                                        required
+                                        autocomplete="email"
+                                    >
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="adminPassword" class="form-label">Password</label>
+                                    <input 
+                                        type="password" 
+                                        class="form-control" 
+                                        id="adminPassword" 
+                                        name="password" 
+                                        placeholder="Enter your password"
+                                        required
+                                        autocomplete="current-password"
+                                    >
+                                </div>
+
+                                <div class="d-grid gap-2 mb-3">
+                                    <button type="submit" class="btn btn-primary" id="adminLoginBtn">
+                                        Login as Admin
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="text-center">
+                        <p class="mb-0">Don't have an account? <a href="/register">Register here</a></p>
+                    </div>
+
+                    <div id="loginError" class="alert alert-danger d-none mt-3" role="alert"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<%- include('partials/footer') %>
+
+<script type="module">
+    import { signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    
+    const loginForm = document.getElementById('loginForm');
+    const adminLoginForm = document.getElementById('adminLoginForm');
+    const loginBtn = document.getElementById('loginBtn');
+    const adminLoginBtn = document.getElementById('adminLoginBtn');
+    const loginError = document.getElementById('loginError');
+    
+    function handleLogin(email, password, role) {
+        return async function(e) {
+            e.preventDefault();
+            
+            const btn = role === 'admin' ? adminLoginBtn : loginBtn;
+            btn.disabled = true;
+            btn.textContent = 'Logging in...';
+            loginError.classList.add('d-none');
+            
+            try {
+                const auth = window.firebaseAuth;
+                const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+                
+                // Get ID token
+                const idToken = await user.getIdToken();
+                
+                // Send token to server
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        idToken: idToken,
+                        userData: {
+                            email: user.email,
+                            name: user.displayName,
+                            role: role
+                        }
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    window.location.href = '/';
+                } else {
+                    throw new Error(data.error || 'Login failed');
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                loginError.textContent = error.message || 'Login failed. Please check your credentials.';
+                loginError.classList.remove('d-none');
+                btn.disabled = false;
+                btn.textContent = role === 'admin' ? 'Login as Admin' : 'Login as Student';
+            }
+        };
+    }
+    
+    if (loginForm) {
+        loginForm.addEventListener('submit', function(e) {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            handleLogin(email, password, 'student')(e);
+        });
+    }
+    
+    if (adminLoginForm) {
+        adminLoginForm.addEventListener('submit', function(e) {
+            const email = document.getElementById('adminEmail').value;
+            const password = document.getElementById('adminPassword').value;
+            handleLogin(email, password, 'admin')(e);
+        });
+    }
+</script>

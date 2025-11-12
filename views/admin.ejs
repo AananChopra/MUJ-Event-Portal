@@ -1,0 +1,83 @@
+<%- include('partials/header') %>
+
+    <!-- Page Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="display-5 mb-3" style="color: var(--accent-color);">Admin Panel</h1>
+            <p class="lead text-muted">View all event registrations</p>
+        </div>
+    </div>
+
+    <!-- Alert Messages -->
+    <% if (typeof message !== 'undefined' && message) { %>
+        <div class="alert alert-<%= messageType || 'info' %> alert-dismissible fade show" role="alert">
+            <%= message %>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    <% } %>
+
+    <!-- Registrations Table -->
+    <div class="card shadow">
+        <div class="card-header text-white d-flex justify-content-between align-items-center" style="background: linear-gradient(135deg, var(--accent-color) 0%, var(--accent-hover) 100%);">
+            <h5 class="mb-0">All Registrations</h5>
+            <span class="badge bg-light text-primary">
+                Total: <%= typeof registrations !== 'undefined' ? registrations.length : 0 %>
+            </span>
+        </div>
+        <div class="card-body p-0">
+            <% if (typeof registrations !== 'undefined' && registrations.length > 0) { %>
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Participant Name</th>
+                                <th scope="col">Email</th>
+                                <th scope="col">Event</th>
+                                <th scope="col">Event Date</th>
+                                <th scope="col">Venue</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% registrations.forEach((registration, index) => { %>
+                                <tr>
+                                    <th scope="row"><%= registration.id %></th>
+                                    <td><strong><%= registration.name %></strong></td>
+                                    <td><%= registration.email %></td>
+                                    <td><span class="badge" style="background-color: var(--accent-color);"><%= registration.event_title %></span></td>
+                                    <td><%= new Date(registration.event_date).toLocaleDateString('en-US', { 
+                                        year: 'numeric', 
+                                        month: 'short', 
+                                        day: 'numeric' 
+                                    }) %></td>
+                                    <td><%= registration.event_venue %></td>
+                                </tr>
+                            <% }); %>
+                        </tbody>
+                    </table>
+                </div>
+            <% } else { %>
+                <!-- No Registrations Message -->
+                <div class="alert alert-info m-4" role="alert">
+                    <h5 class="alert-heading">No Registrations Yet</h5>
+                    <p class="mb-0">There are no registrations to display. Registrations will appear here once participants register for events.</p>
+                </div>
+            <% } %>
+        </div>
+    </div>
+
+    <!-- Back to Home Button -->
+    <div class="mt-4">
+        <a href="/admin/events" class="btn btn-outline-primary">
+            Manage Events
+        </a>
+        <a href="/" class="btn btn-outline-primary ms-2">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left me-1" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"/>
+            </svg>
+            Back to Events
+        </a>
+    </div>
+
+<%- include('partials/footer') %>
+

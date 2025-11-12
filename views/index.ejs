@@ -1,0 +1,74 @@
+<%- include('partials/header') %>
+
+    <!-- Page Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="display-4 mb-3" style="color: var(--accent-color);">Upcoming Events</h1>
+            <p class="lead text-muted">Register for exciting events happening soon!</p>
+        </div>
+    </div>
+
+    <!-- Alert Messages -->
+    <% if (typeof message !== 'undefined' && message) { %>
+        <div class="alert alert-<%= messageType || 'info' %> alert-dismissible fade show" role="alert">
+            <%= message %>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    <% } %>
+
+    <!-- Events Grid -->
+    <% if (typeof events !== 'undefined' && events.length > 0) { %>
+        <div class="row g-4">
+            <% events.forEach(event => { %>
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title" style="color: var(--accent-color);"><%= event.title %></h5>
+                            <p class="card-text mb-2">
+                                <a href="/event/<%= event.id %>" class="text-decoration-none" style="color: var(--accent-color);">
+                                    <small>View Details & Attendees</small>
+                                </a>
+                            </p>
+                            <p class="card-text text-muted mb-3">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-calendar3 me-2" viewBox="0 0 16 16">
+                                    <path d="M14 0H2a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zM1 3.857C1 3.384 1.448 3 2 3h12c.552 0 1 .384 1 .857v10.286c0 .473-.448.857-1 .857H2c-.552 0-1-.384-1-.857V3.857z"/>
+                                    <path d="M12 7a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm-5 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm2-3a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm-5 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/>
+                                </svg>
+                                <%= new Date(event.date).toLocaleDateString('en-US', { 
+                                    year: 'numeric', 
+                                    month: 'long', 
+                                    day: 'numeric' 
+                                }) %>
+                            </p>
+                            <p class="card-text text-muted mb-auto">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-geo-alt-fill me-2" viewBox="0 0 16 16">
+                                    <path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10zm0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6z"/>
+                                </svg>
+                                <%= event.venue %>
+                            </p>
+                            <% if (typeof user !== 'undefined' && user) { %>
+                                <a href="/register/<%= event.id %>" class="btn btn-primary mt-3">
+                                    Register Now
+                            <% } else { %>
+                                <a href="/login" class="btn btn-primary mt-3">
+                                    Login to Register
+                            <% } %>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right ms-1" viewBox="0 0 16 16">
+                                    <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z"/>
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            <% }); %>
+        </div>
+    <% } else { %>
+        <!-- No Events Message -->
+        <div class="alert alert-info" role="alert">
+            <h4 class="alert-heading">No Events Available</h4>
+            <p>There are currently no events scheduled. Please check back later!</p>
+        </div>
+    <% } %>
+
+<%- include('partials/footer') %>
+
